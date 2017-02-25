@@ -110,5 +110,9 @@ def get_method_ast( func ):
 #-----------------------------------------------------------------------
 # http://stackoverflow.com/a/19416942
 def get_closure_dict( fn ):
-  closure_objects = [c.cell_contents for c in fn.func_closure]
+  # If fn does not close over anything, fn.func_closure will be None
+  # instead of the more sensible [], so we need to check here
+  func_closure = fn.func_closure if fn.func_closure is not None else []
+
+  closure_objects = [c.cell_contents for c in func_closure]
   return dict( zip( fn.func_code.co_freevars, closure_objects ))
