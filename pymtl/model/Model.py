@@ -165,6 +165,15 @@ class Model( object ):
     >>> s.connect( s.my_bundle_a, s.my_bundle_b )
     """
 
+    # Throw an error if connect() is used on a Model.
+    if isinstance( left_port, Model ) or isinstance( right_port, Model ):
+      e = ('Cannot pass a Model object to connect(). Pass the ports of the '
+           'model instead.')
+      frame, filename, lineno, func_name, lines, idx = inspect.stack()[1]
+      msg  = '{}\n\nLine: {} in File: {}\n>'.format( e, lineno, filename )
+      msg += '>'.join( lines )
+      raise PyMTLConnectError( msg )
+
     # Throw an error if connect() is used on two wires.
     if isinstance( left_port, Wire ) and isinstance( right_port, Wire ):
       e = ('Connecting two Wire signals is not supported!\n'
